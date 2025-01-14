@@ -1,5 +1,5 @@
-import { Request, Response } from "express";
-import Todo from "../models/todo.model.ts";
+import { NextFunction, Request, Response } from "express";
+import Todo from "../models/todo.model";
 
 // Admin assigns a task
 export const createTodo = async (req: Request, res: Response) => {
@@ -25,7 +25,7 @@ export const getAllTodos = async (req: Request, res: Response) => {
 // User views their tasks
 export const getUserTodos = async (req: Request, res: Response) => {
   try {
-    const todos = await Todo.find({ assignedTo: req.user._id });
+    const todos = await Todo.find({ assignedTo: req.user!._id });
     res.status(200).json(todos);
   } catch (error) {
     res.status(500).json({ error: "Failed to fetch user todos" });
@@ -33,21 +33,22 @@ export const getUserTodos = async (req: Request, res: Response) => {
 };
 
 // User updates task status
-export const updateTodoStatus = async (req: Request, res: Response) => {
+export const updateTodoStatus = async (req: Request, res: Response,next: NextFunction) : Promise<void> => {
   const { id } = req.params;
   const { status } = req.body;
 
   if (!["pending", "completed"].includes(status)) {
-    return res.status(400).json({ message: "Invalid status value" });
+    res.status(400).json({ message: "Invalid status value" });
+    return
   }
 
   try {
     const todo = await Todo.findOneAndUpdate(
-      { _id: id, assignedTo: req.user._id },
+      { _id: id, assignedTo: req.user!._id },
       { status },
       { new: true }
     );
-    if (!todo) return res.status(404).json({ message: "Todo not found" });
+    if (!todo) {res.status(404).json({ message: "Todo not found" }); return}
 
     res.status(200).json(todo);
   } catch (error) {

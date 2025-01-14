@@ -18,12 +18,12 @@ const app: Express = express();
 
 
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
 app.use(express.json());
+app.use(bodyParser.json());
 // app.use(morgan("dev"));
 
 app.use("/api/auth",authRoutes);
-app.use("api/todos",todoRoutes);
+app.use("/api/todos",todoRoutes);
 
 
 // const initApp = async (): Promise<void> => {

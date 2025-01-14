@@ -6,7 +6,11 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "outDir": "./dist",
-    "rootDir": "./app"
+    "rootDir": "./app",
+    "typeRoots": [
+      "./node_modules/@types",
+      "./app/types"
+    ]
   },
   "include": ["app"],
   "exclude": ["node_modules"]
